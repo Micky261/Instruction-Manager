@@ -1,0 +1,11 @@
+#Bilder und Bildordner
+images/notUsedYet/*
+
+#Dateimanager
+manager/*
+
+#Einzelne Dateien
+backup
+index.zip
+manager.info
+phpliteadmin.php
