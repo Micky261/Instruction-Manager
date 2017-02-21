@@ -1,0 +1,212 @@
+.icon {
+    max-height: 128px;
+    max-width: 128px;
+}
+.iconCon {
+    height: 128px;
+    width: 128px;
+}
+.folders > div {
+    font-size: 14px;
+}
+.folders {
+    float: left;
+    width: 128px;
+    margin: 5px;
+    height: 250px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+#abortAction > a > span {
+    vertical-align: middle;
+}
+
+.overlayBG {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    top: 0;
+    left: 0;
+    z-index: 99999;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    opacity: .5;
+    filter: alpha(opacity = 50);
+}
+.overlay {
+    width: 75%;
+    
+    position: fixed;
+    z-index: 99999;
+    background: #eee;
+    border: 1px solid #000;
+    border-radius: 10px;
+    box-shadow: 0 0 30px #000;
+    font-size: 16px;
+    line-height: 22px;
+}
+.overlay .content {
+    padding: 16px;
+}
+.overlay .closeoverlay {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 2px;
+    cursor: pointer;
+}
+
+.overlayContent .formEditTextarea {
+    width: 95%;
+    margin: 10px;
+}
+
+
+h4, h5, h6,
+h1, h2, h3 {margin: 0;}
+ul, ol {margin: 0;}
+p {margin: 0;}
+html, body{
+  font-family: 'Roboto', sans-serif;
+   font-size: 100%;
+   background:#fff; 
+}
+a {
+  text-decoration: none;
+  transition: 0.5s all;
+  -webkit-transition: 0.5s all;
+  -moz-transition: 0.5s all;
+  -o-transition: 0.5s all;
+}
+a:hover {
+  transition: 0.5s all;
+  -webkit-transition: 0.5s all;
+  -moz-transition: 0.5s all;
+  -o-transition: 0.5s all;
+  text-decoration:none;
+}
+.header-address ul {
+    padding: 0em;
+    list-style: none;
+}
+.header {
+    border-bottom: 1px solid #999;
+}
+.header-address ul li {
+    display: inline-block;
+    margin-right:1em;
+}
+.header-address ul li a{
+    display: inline-block;
+}
+.top-header {
+    padding: 1em 0em;
+    background:#CE254B;
+    border-top:5px solid #F7B400;
+}
+.header-address ul li a {
+    font-size:0.9em;
+    color: #fff;
+}
+.header-address ul li a:hover {
+    color:#FDBD10;
+}
+.header-address{
+    padding: 0px;
+}
+/*--welcome start here--*/
+.welcome {
+    padding: 5em 0em;
+}
+.welcome-top h1, .options-top h1 {
+    font-size: 3em;
+    color:#CE254B;
+    font-family: 'Ubuntu Condensed', sans-serif;
+}
+.welcome-top p, .options-top p {
+    font-size:0.91em;
+    color:#797878;
+    width:44%;
+    margin: 0.7em auto 0.5em;
+    text-align: center;
+    line-height: 1.8em;
+}
+/*-- agileits --*/
+.welcome-top, .options-top {
+    padding-bottom: 4em;
+}
+.copy-rights {
+    text-align: center;
+    padding: 2em 0em;
+    background: #F7F7F7;
+}
+.copy-rights-main p {
+    font-size: 1em;
+    color: #000;
+}
+.copy-rights-main p a {
+    color: #000;
+    font-size: 1em;
+}
+.copy-rights-main p a:hover{
+    color: #CE254B;
+}
+@media(max-width:991px){
+    .welcome-top, .options-top {
+        padding-bottom: 3em;
+    }
+}
+@media(max-width:768px){
+    .welcome {
+        padding: 3em 0em;
+    }
+}
+@media(max-width:640px){
+    .welcome-top p, .options-top p {
+        width:70%;
+    }
+}
+@media(max-width:480px){
+    .header-address {
+        float: none;
+        width: 100%;
+        text-align: center;
+    }
+    .welcome {
+        padding: 2em 0em;
+    }
+    .welcome-top, .options-top {
+        padding-bottom: 1.5em;
+    }
+}
+@media(max-width:414px){
+    .welcome-top h1, .options-top h1 {
+        font-size: 2em;
+    }
+    .welcome {
+        padding: 1.5em 0em;
+    }
+    .welcome-top, .options-top {
+        padding-bottom: 1em;
+    }
+    .copy-rights-main p {
+        font-size: 0.9em;
+    }
+    .copy-rights {
+        padding: 1.5em 0em;
+    }
+}
+@media(max-width:384px){
+    .header-address ul li {
+        margin-right: 0.8em;
+    }
+}
+@media(max-width:320px){
+    .header-address ul li {
+        margin: 0em 0em 0.3em 0em;
+    }
+    .top-header {
+        padding: 0.7em 0em;
+    }
+}
