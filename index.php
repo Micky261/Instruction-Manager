@@ -559,10 +559,10 @@ if (isset($_POST['deleteCP']) AND $_POST['deletePrompt'] == "J") { //POST-Parame
 						}
 					}
 					?>
-					Priorität: <input type="number" name="ProPriority" min="0" max="10" required="required" value="<?php echo $proPriority; ?>" /><br />
-					Bewertung: <input type="number" name="ProRating" min="0" max="10" required="required" value="<?php echo $proRating; ?>" /><br />
+					Priorität: <input type="number" name="ProPriority" min="0" max="10" value="<?php echo $proPriority; ?>" /><br />
+					Bewertung: <input type="number" name="ProRating" min="0" max="10" value="<?php echo $proRating; ?>" /><br />
 					Projekt-Bild auswählen: 
-					<select name="ProImage" onChange="javascript:formEditPChangeimg(this)" id="formEditPSelect" required="required">
+					<select name="ProImage" onChange="javascript:formEditPChangeimg(this)" id="formEditPSelect">
 						<option value="">Kein Bild</option>
 						<?php echo $proImageOptions; ?>
 					</select><br />
