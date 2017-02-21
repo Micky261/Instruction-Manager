@@ -61,8 +61,13 @@
     width: 95%;
     margin: 10px;
 }
+.failure_message {
+    border: 1px solid #6F0000;
+    color: #ddd;
+    background-color: #AF5151;
+}
 
-
+/********* Allied Design ****/
 h4, h5, h6,
 h1, h2, h3 {margin: 0;}
 ul, ol {margin: 0;}
