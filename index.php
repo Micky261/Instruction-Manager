@@ -33,18 +33,20 @@ if ($_GET['p'] == "New.Install") { //Installation per p-Parameter (?p=New.Instal
 	}
 }
 
+//unixUmlauts wandelt Umlaute und sz in Sonderzeichen um und UTF8 dekodiert diese
 function unixUmlauts($inputString) {
 	return utf8_decode(str_replace(array('Ä', 'Ö', 'Ü', 'ä', 'ö', 'ü', 'ß'), array('%C4', '%D6', '%DC', '%E4', '%F6', '%FC', '%DF'), $inputString));
 }
 
 //Pfad aus Parameter p abfragen (wenn nicht "New.Install")
 $getPath = $_GET['p'];
+$failure = array("", "");
 
 //Optionsformulare verarbeiten
 if (isset($_POST['addCP'])) { //POST-Parameter addCP (submit-name) gesendet - Kategorie/Projekt hinzufügen
 	$nextFolderID = getSetting("catproIdA_I"); //Nächste Ordner-ID abfragen (aus Settings)
 	if (strpos($_POST['CatProName'], "_") > 0 OR strpos($_POST['CatProName'], "/") > 0) { //Ordner erstellen abbrechen, wenn die Zeichen "/" oder "_" enthalten sind
-
+		$failure = array("#000001", "Das Projekt/Die Kategorie konnte nicht erstellt werden. '/' und '_' sind nicht erlaubt."); //Fehlermeldung erstellen
 	} else {
 		$dir = $_POST['CatOrPro'] . "_" . $nextFolderID . "_" . $_POST['CatProName']; //Kategorie/Projekt _ Ordner-ID _ Ordnername (utf8decodiert)
 		mkdir(utf8_decode("." . getSetting("baseDir") . $getPath . "/" . $dir)); //Pfad erstellen
@@ -54,7 +56,7 @@ if (isset($_POST['addCP'])) { //POST-Parameter addCP (submit-name) gesendet - Ka
 } elseif (isset($_POST['renameCP'])) { //POST-Parameter renameCP (submit-name) gesendet - Kategorie/Projekt umbenennen
 	$folder_renameName = $_POST['CatProReName']; //Neuer Name
 	if (strpos($folder_renameName, "_") > 0 OR strpos($folder_renameName, "/") > 0) { //Renaming abbrechen, wenn die Zeichen "/" oder "_" enthalten sind
-
+		$failure = array("#000002", "Das Projekt/Die Kategorie konnte nicht umbenannt werden. '/' und '_' sind nicht erlaubt."); //Fehlermeldung erstellen
 	} else {
 		$c = explode("/", $getPath); //Aufgerufenen Pfad anhand von "/" auseinander nehmen
 		$a = explode("_", array_pop($c)); //Letzten Teil des Pfades entfernen -> Rückgabe (entfernter Index) anhand von "_" auseinander nehmen
@@ -186,7 +188,7 @@ if (isset($_POST['deleteCP']) AND $_POST['deletePrompt'] == "J") { //POST-Parame
 		<script src="js/jquery-1.11.0.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 		<script>
-		$(function() {
+		$(function() { //Beim Öffnen der Website werden alle Felder versteckt.
 			$('#abortAction').toggle(false);
 
 			$('#addCategoryorProject').toggle(false);
@@ -195,11 +197,12 @@ if (isset($_POST['deleteCP']) AND $_POST['deletePrompt'] == "J") { //POST-Parame
 			$('#deleteCategoryorProject').toggle(false);
 			$('#uploadFilesToProject').toggle(false);
 			$('#editFiles').toggle(false);
-
+			
+			//Bild im Project Edit-Menü laden und ändern.
 			formEditPChangeimg(document.getElementById("formEditPSelect"));
 		});
 
-		function locationHashChanged() {
+		function locationHashChanged() { //Funktion für die Hashänderung, blendet Felder nach Bedarf ein/aus
 			switch (location.hash) {
 				case "#addCatPro":
 					$('.welcome-main').toggle(false);
@@ -257,9 +260,10 @@ if (isset($_POST['deleteCP']) AND $_POST['deletePrompt'] == "J") { //POST-Parame
 			}
 		}
 
+		//Hash-Change abfangen und Funktion aufrufen
 		window.onhashchange = locationHashChanged;
 
-		function formEditPChangeimg(proImage) {
+		function formEditPChangeimg(proImage) { //Project Edit-Menü -> Bild laden bzw. de-laden wenn keines gewählt
 			if (proImage.value == "") {
 				document.getElementById("formEditPImgpreview").src = 'images/projects.png';
 			} else {
@@ -405,13 +409,22 @@ if (isset($_POST['deleteCP']) AND $_POST['deletePrompt'] == "J") { //POST-Parame
 			 	<h1><?php echo str_replace(array("@"), array("/"), $title); ?></h1>
 				Navigation: <?php echo str_replace(array("@"), array("/"), $breadcrumbs); ?>
 			 </div>
+			 <?php if ($failure[0] != "") { //Fehleranzeigen, wenn vorhanden
+			 echo "<div class=\"failure\">
+			 	<div class=\"failure_message\">
+					<strong>$failure[0]</strong><br />
+					$failure[1]
+				</div>
+			 </div>";
+			 }
+			 ?>
 			 <div class="welcome-bottom">
 				<?php
 				while ($entry = readdir($openDir)) {
 					if ($entry != '.' && $entry != "..") {
 						if ($folderType == "C") { //Wenn aktueller Ordner "Kategorie" ist (enthält NUR Unterordner)
 							$h = explode("_", $entry);
-							if ($h[0] == "C") { //Wenn Unterordner "Kategorie" ist (keine Priorität und keine Bewertung)
+							if ($h[0] == "C") { //Wenn Unterordner "Kategorie" ist (keine Priorität und keine Bewertung) -> Eigenschaften
 								$entry_Dir[] = utf8_encode($entry);
 								$entry_DirID[] = $h[1];
 								$entry_DirType[] = $h[0];
@@ -419,7 +432,7 @@ if (isset($_POST['deleteCP']) AND $_POST['deletePrompt'] == "J") { //POST-Parame
 								$entry_ProPriority[] = 0;
 								$entry_ProRating[] = 0;
 								$entry_ProImage[] = "";
-							} elseif ($h[0] == "P") { //Wenn Unterordner "Projekt" ist (mit Bewertung und Priorität)
+							} elseif ($h[0] == "P") { //Wenn Unterordner "Projekt" ist (mit Bewertung und Priorität) -> Eigenschaften
 								$proPriRatImg = $db->query("SELECT PRIORITY as P, RATING as R, PICTURE as I FROM projectorizer WHERE ID = '" . $h[1] . "'")->fetchArray();
 								$entry_Dir[] = utf8_encode($entry);
 								$entry_DirID[] = $h[1];
@@ -559,7 +572,7 @@ if (isset($_POST['deleteCP']) AND $_POST['deletePrompt'] == "J") { //POST-Parame
 						}
 					}
 					?>
-					Priorität: <input type="number" name="ProPriority" min="0" max="10" value="<?php echo $proPriority; ?>" /><br />
+					Priorität: <input type="number" name="ProPriority" min="0" max="10" required="required" value="<?php echo $proPriority; ?>" /><br />
 					Bewertung: <input type="number" name="ProRating" min="0" max="10" value="<?php echo $proRating; ?>" /><br />
 					Projekt-Bild auswählen: 
 					<select name="ProImage" onChange="javascript:formEditPChangeimg(this)" id="formEditPSelect">
