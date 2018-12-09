@@ -698,8 +698,11 @@ if (isset($_POST['deleteCP']) AND $_POST['deletePrompt'] == "J") { //POST-Parame
 				$sourceLinksFileContent .= $line;
 
 				$a = explode(" - ", $line);
-				if (count($a) > 1) {
+				if (count($a) > 2) {
 					$lineLinks = "<a href='" . $a[0] . "' target='_blank'>" . $a[1] . "</a> - " . $a[2];
+				}
+				elseif (count($a) == 2) {
+					$lineLinks = "<a href='" . $a[0] . "' target='_blank'>" . $a[1] . "</a>";
 				}
 				else {
 					$lineLinks = "<a href='" . $line . "' target='_blank'>" . $line . "</a>";
