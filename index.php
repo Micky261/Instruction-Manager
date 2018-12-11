@@ -76,7 +76,9 @@ if (isset($_POST['addCP'])) { //POST-Parameter addCP (submit-name) gesendet - Ka
 		header("Location: ?p=$folderPathURL"); //Neuen (umbenannten) URL-Pfad aufrufen
 	}
 } elseif (isset($_POST['editP'])) { //POST-Parameter editCP (submit-name) gesendet - -/Projekt bearbeiten (Bild, Priorität, Bewertung)
-	$folderID = explode("_", array_pop(explode("/", $getPath))); //Letzten Ordner aus Pfad nehmen und anhand von "_" auseinander nehmen
+	$folderPathExplode = explode("/", $getPath);
+	$lastFolder = array_pop($folderPathExplode); //Letzten Ordner aus Pfad nehmen
+	$folderID = explode("_", $lastFolder); //und anhand von "_" auseinander nehmen
 	$folderID = $folderID[1]; //Letzter Ordner-ID
 	$numFolderRows = $db->query("SELECT COUNT(*) AS FOLDERS FROM projectorizer WHERE ID='$folderID';")->fetchArray(); //Anzahl Reihen mit Letzter Ordner-ID zählen
 	if ($numFolderRows['FOLDERS'] == 0) { //Wenn keine Reihe vorhanden ist
