@@ -1,7 +1,16 @@
 <?php
-
 //Inhaltstyp und Zeichenkodierung festlegen
 header('Content-Type: text/html; charset=utf-8');
+
+//Set language code
+$lang = "en_GB";
+
+include_once("./locale/" . $lang . ".php");
+
+function t($str) {
+	global $translate;
+	return $translate[$str];
+}
 
 //Datenbank (SQLite) einbinden
 $db = new SQLite3("manager.info");
@@ -29,7 +38,7 @@ if ($_GET['p'] == "New.Install") { //Installation per p-Parameter (?p=New.Instal
 		"); //UPDATE-Befehl durch Löschen und Neueinfügen der Daten umgehen xP
 		header("Location: ?p=/"); //Installation beenden -> Standard-Verzeichnis
 	} else { //Ein oder zwei Reihen vorhanden -> Keine Lust auf Fehlerabfang
-		echo "Installationsfehler."; exit; //Fehlerausgabe -> Skriptabbruch
+		echo t("Installationsfehler."); exit; //Fehlerausgabe -> Skriptabbruch
 	}
 }
 
@@ -46,7 +55,7 @@ $failure = array("", "");
 if (isset($_POST['addCP'])) { //POST-Parameter addCP (submit-name) gesendet - Kategorie/Projekt hinzufügen
 	$nextFolderID = getSetting("catproIdA_I"); //Nächste Ordner-ID abfragen (aus Settings)
 	if (strpos($_POST['CatProName'], "_") > 0 OR strpos($_POST['CatProName'], "/") > 0) { //Ordner erstellen abbrechen, wenn die Zeichen "/" oder "_" enthalten sind
-		$failure = array("#000001", "Das Projekt/Die Kategorie konnte nicht erstellt werden. '/' und '_' sind nicht erlaubt."); //Fehlermeldung erstellen
+		$failure = array("#000001", t("Das Projekt/Die Kategorie konnte nicht erstellt werden. '/' und '_' sind nicht erlaubt.")); //Fehlermeldung erstellen
 	} else {
 		$dir = $_POST['CatOrPro'] . "_" . $nextFolderID . "_" . $_POST['CatProName']; //Kategorie/Projekt _ Ordner-ID _ Ordnername (utf8decodiert)
 		mkdir(utf8_decode("." . getSetting("baseDir") . $getPath . "/" . $dir)); //Pfad erstellen
@@ -56,7 +65,7 @@ if (isset($_POST['addCP'])) { //POST-Parameter addCP (submit-name) gesendet - Ka
 } elseif (isset($_POST['renameCP'])) { //POST-Parameter renameCP (submit-name) gesendet - Kategorie/Projekt umbenennen
 	$folder_renameName = $_POST['CatProReName']; //Neuer Name
 	if (strpos($folder_renameName, "_") > 0 OR strpos($folder_renameName, "/") > 0) { //Renaming abbrechen, wenn die Zeichen "/" oder "_" enthalten sind
-		$failure = array("#000002", "Das Projekt/Die Kategorie konnte nicht umbenannt werden. '/' und '_' sind nicht erlaubt."); //Fehlermeldung erstellen
+		$failure = array("#000002", t("Das Projekt/Die Kategorie konnte nicht umbenannt werden. '/' und '_' sind nicht erlaubt.")); //Fehlermeldung erstellen
 	} else {
 		$c = explode("/", $getPath); //Aufgerufenen Pfad anhand von "/" auseinander nehmen
 		$a = explode("_", array_pop($c)); //Letzten Teil des Pfades entfernen -> Rückgabe (entfernter Index) anhand von "_" auseinander nehmen
@@ -152,11 +161,11 @@ if (isset($f) AND isset($g)) { //Wenn Pfad nicht ?p=/
 	$folder = $f; //Aktueller Ordner (nicht auseinander genommen)
 	$folderType = $g[0]; //Aktueller Ordner Typ (C/P)
 	$folderID = $g[1]; //Aktuelle Ordner ID
-	$title = ($g[0] == "C") ? ("Kategorie: " . $g[2]) : ("Projekt: " . $g[2]); //Ordnertyp in Sprache umwandeln
+	$title = ($g[0] == "C") ? (t("Kategorie") . ": " . $g[2]) : (t("Projekt") . ": " . $g[2]); //Ordnertyp in Sprache umwandeln
 } else { //Wenn Pfad gleich ?p=/
 	$folder = "/"; //Aktueller Ordner
 	$folderType = "C"; //Ordnertyp Kategorie
-	$title = "Index"; //Ordnertyp in Sprache umwandeln (Spezial)
+	$title = t("Index"); //Ordnertyp in Sprache umwandeln (Spezial)
 }
 
 //Optionsformulare verarbeiten (2) - openDir und weitere Angaben nötig
@@ -174,7 +183,7 @@ if (isset($_POST['deleteCP']) AND $_POST['deletePrompt'] == "J") { //POST-Parame
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title><?php echo $title; ?> - Projekteverwaltung</title>
+		<title><?php echo $title . " - " . t("Projektverwaltung"); ?></title>
 		<link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all">
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 		<!-- Custom Theme files -->
@@ -370,34 +379,34 @@ if (isset($_POST['deleteCP']) AND $_POST['deletePrompt'] == "J") { //POST-Parame
 					if ($getPath != "/") { 
 						if ($folderType == "C") {
 					?>
-					<li class="actionBar"><a href="#addCatPro">Hinzufügen</a></li>
+					<li class="actionBar"><a href="#addCatPro"><?php echo t("Hinzufügen"); ?></a></li>
 					<?php
 						}
 					?>
-					<li class="actionBar"><a href="#renameCatPro">Umbenennen</a></li>
-					<li class="actionBar"><a href="#deleteCatPro">Löschen</a></li>
+					<li class="actionBar"><a href="#renameCatPro"><?php echo t("Umbenennen"); ?></a></li>
+					<li class="actionBar"><a href="#deleteCatPro"><?php echo t("Löschen"); ?></a></li>
 					<?php
 						if ($folderType == "P") {
 					?>
-					<li class="actionBar"><a href="#editProject">Bearbeiten</a></li>
-					<li class="actionBar"><a href="#uploadFilesToProject">Hochladen</a></li>
-					<li class="actionBar"><a href="#editFiles">Dateien bearbeiten</a></li>
-					<li class="actionBar"><a href="#editNotices" onClick="$.fn.overlay('notices-');">Notizen</a></li>
+					<li class="actionBar"><a href="#editProject"><?php echo t("Bearbeiten"); ?></a></li>
+					<li class="actionBar"><a href="#uploadFilesToProject"><?php echo t("Hochladen"); ?></a></li>
+					<li class="actionBar"><a href="#editFiles"><?php echo t("Dateien bearbeiten"); ?></a></li>
+					<li class="actionBar"><a href="#editNotices" onClick="$.fn.overlay('notices-');"><?php echo t("Notizen"); ?></a></li>
 					<?php
 						}
 						if ($folder != "/") {
 					?>
-					<li class="actionBar"><a href="#editSourceLinks" onClick="$.fn.overlay('sourceLinks-');">Quellen/Links</a></li>
+					<li class="actionBar"><a href="#editSourceLinks" onClick="$.fn.overlay('sourceLinks-');"><?php echo t("Quellen/Links"); ?></a></li>
 					<?php
 						}
 						if ($folderType == "P") {
 					?>
-					<li class="actionBar"><a href="#editMaterials" onClick="$.fn.overlay('materials-');">Materialliste</a></li>
+					<li class="actionBar"><a href="#editMaterials" onClick="$.fn.overlay('materials-');"><?php echo t("Materialliste"); ?></a></li>
 					<?php 
 						}
 					} 
 					?>
-					<li id="abortAction"><a href="#abortAction"><img src="images/cross.png" width="16" height="16" /> <span>Aktion abbrechen</span></a></li>
+					<li id="abortAction"><a href="#abortAction"><img src="images/cross.png" width="16" height="16" /> <span><?php echo t("Aktion abbrechen"); ?></span></a></li>
 				</ul>
 			</div>
 		  <div class="clearfix"> </div>
@@ -409,7 +418,7 @@ if (isset($_POST['deleteCP']) AND $_POST['deletePrompt'] == "J") { //POST-Parame
 		<div class="welcome-main">
 			 <div class="welcome-top">
 			 	<h1><?php echo str_replace(array("@"), array("/"), $title); ?></h1>
-				Navigation: <?php echo str_replace(array("@"), array("/"), $breadcrumbs); ?>
+					<?php echo t("Navigation") . ": " . str_replace(array("@"), array("/"), $breadcrumbs); ?>
 			 </div>
 			 <?php if ($failure[0] != "") { //Fehleranzeigen, wenn vorhanden
 			 echo "<div class=\"failure\">
@@ -473,7 +482,7 @@ if (isset($_POST['deleteCP']) AND $_POST['deletePrompt'] == "J") { //POST-Parame
 				if ($getPath != trim("/")) {
 					$folderUp = str_replace("/" . $folder, "", $getPath);
 					($folderUp == trim("")) ? ($folderUp = "/") : ("");
-					echo "<a href=\"?p=" . $folderUp . "\"><div class='folders'><div class='iconCon'><img class='icon' src='images/folderUp.png' /></div><div>Übergeordnetes Element aufrufen</div></div></a>";
+					echo "<a href=\"?p=" . $folderUp . "\"><div class='folders'><div class='iconCon'><img class='icon' src='images/folderUp.png' /></div><div>" . t("Übergeordnetes Element aufrufen") . "</div></div></a>";
 				}
 
 				if ($folderType == "C" AND isset($entry_Dir)) {
@@ -519,40 +528,40 @@ if (isset($_POST['deleteCP']) AND $_POST['deletePrompt'] == "J") { //POST-Parame
 		</div>
 		<div class="options-main" id="addCategoryorProject">
 			<div class="options-top">
-				<h1>Optionen - <?php echo $title; ?></h1>
-				Navigation: <?php echo $breadcrumbs; ?>
+				<h1><?php echo t("Optionen") . " - " . $title; ?></h1>
+				<?php echo t("Navigation") . ": " . $breadcrumbs; ?>
 			</div>
 			<div class="options-bottom">
 				<form method="POST" action="#categoryAdded">
 					<select name="CatOrPro" size="2" required="required">
-						<option value="C">Kategorie</option>
-						<option value="P">Projekt</option>
+						<option value="C"><?php echo t("Kategorie"); ?></option>
+						<option value="P"><?php echo t("Projekt"); ?></option>
 					</select><br />
 					<input type="text" name="CatProName" required="required" />
-					<input type="submit" name="addCP" value="Hinzufügen" />
+					<input type="submit" name="addCP" value="<?php echo t("Hinzufügen"); ?>" />
 				</form><br />
-				Die Sonderzeichen "/" und "_" sind nicht erlaubt.<br />
-				<small>Wird ein "@" eingegeben, wird dieses in der Kategorie-/Projekt-Beschriftung in ein "/" geändert.</small>
+				<?php echo t("Die Sonderzeichen '/' und '_' sind nicht erlaubt."); ?><br />
+				<small><?php echo t("Wird ein '@' eingegeben, wird dieses in der Kategorie-/Projekt-Beschriftung in ein '/' geändert."); ?></small>
 			</div>
 		</div>
 		<div class="options-main" id="renameCategoryorProject">
 			<div class="options-top">
-				<h1>Optionen - <?php echo $title; ?></h1>
-				Navigation: <?php echo $breadcrumbs; ?>
+				<h1><?php echo t("Optionen") . " - " . $title; ?></h1>
+				<?php echo t("Navigation") . ": " . $breadcrumbs; ?>
 			</div>
 			<div class="options-bottom">
 				<form method="POST" action="#categoryRenamed">
 					<input type="text" name="CatProReName" required="required" />
-					<input type="submit" name="renameCP" value="Umbenennen" />
+					<input type="submit" name="renameCP" value="<?php echo t("Umbenennen"); ?>" />
 				</form><br />
-				Die Sonderzeichen "/" und "_" sind nicht erlaubt.<br />
-				<small>Wird ein "@" eingegeben, wird dieses in der Kategorie-/Projekt-Beschriftung in ein "/" geändert.</small>
+				<?php echo t("Die Sonderzeichen '/' und '_' sind nicht erlaubt."); ?><br />
+				<small><?php echo t("Wird ein '@' eingegeben, wird dieses in der Kategorie-/Projekt-Beschriftung in ein '/' geändert."); ?></small>
 			</div>
 		</div>
 		<div class="options-main" id="editProject">
 			<div class="options-top">
-				<h1>Optionen - <?php echo $title; ?></h1>
-				Navigation: <?php echo $breadcrumbs; ?>
+				<h1><?php echo t("Optionen") . " - " . $title; ?></h1>
+				<?php echo t("Navigation") . ": " . $breadcrumbs; ?>
 			</div>
 			<div class="options-bottom">
 				<form method="POST" action="#projectEdited">
@@ -574,51 +583,51 @@ if (isset($_POST['deleteCP']) AND $_POST['deletePrompt'] == "J") { //POST-Parame
 						}
 					}
 					?>
-					Priorität: <input type="number" name="ProPriority" min="0" max="10" required="required" value="<?php echo $proPriority; ?>" /><br />
-					Bewertung: <input type="number" name="ProRating" min="0" max="10" value="<?php echo $proRating; ?>" /><br />
-					Projekt-Bild auswählen: 
+					<?php echo t("Priorität"); ?>: <input type="number" name="ProPriority" min="0" max="10" required="required" value="<?php echo $proPriority; ?>" /><br />
+					<?php echo t("Bewertung"); ?>: <input type="number" name="ProRating" min="0" max="10" value="<?php echo $proRating; ?>" /><br />
+					<?php echo t("Projekt-Bild auswählen"); ?>: 
 					<select name="ProImage" onChange="javascript:formEditPChangeimg(this)" id="formEditPSelect">
-						<option value="">Kein Bild</option>
+						<option value=""><?php echo t("Kein Bild"); ?></option>
 						<?php echo $proImageOptions; ?>
 					</select><br />
-					<input type="submit" name="editP" value="Änderungen bestätigen" />
+					<input type="submit" name="editP" value="<?php echo t('Änderungen speichern'); ?>" />
 				</form><br />
 				<div>
-					Bild-Vorschau: <br />
+				<?php echo t("Bild-Vorschau"); ?>: <br />
 					<img src="" height="120" id="formEditPImgpreview" />
 				</div>
 			</div>
 		</div>
 		<div class="options-main" id="deleteCategoryorProject">
 			<div class="options-top">
-				<h1>Optionen - <?php echo $title; ?></h1>
-				Navigation: <?php echo $breadcrumbs; ?>
+				<h1><?php echo t("Optionen") . " - " . $title; ?></h1>
+				<?php echo t("Navigation") . ": " . $breadcrumbs; ?>
 			</div>
 			<div class="options-bottom">
 				<form method="POST" action="#projectEdited">
-					Eingabe: J für Löschen <small>(Löschbestätigung)</small><input type="text" name="deletePrompt" required="required" />
-					<input type="submit" name="deleteCP" value="Änderungen bestätigen" />
+				<?php echo t("Eingabe: J für Löschen"); ?> <small>(<?php echo t("Löschbestätigung"); ?>)</small><input type="text" name="deletePrompt" required="required" />
+					<input type="submit" name="deleteCP" value="<?php echo t('Änderungen speichern'); ?>" />
 				</form><br />
-				Es wird nur das Verzeichnis "<?php echo $title; ?>" gelöscht. Zur Löschung müssen alle Unterverzeichnisse und deren Inhalte vorher gelöscht werden.<br />
-				<small>Es können nur Ordner gelöscht werden, die mit dieser Website erstellt wurde, da sonst notwendige Löschrechte für PHP fehlen.</small>
+				<?php echo sprintf(t("Es wird nur das Verzeichnis %s gelöscht. Zur Löschung müssen alle Unterverzeichnisse und deren Inhalte vorher gelöscht werden."), $title); ?><br />
+				<small><?php echo t("Es können nur Ordner gelöscht werden, die mit dieser Website erstellt wurde, da sonst notwendige Löschrechte für PHP fehlen."); ?></small>
 			</div>
 		</div>
 		<div class="options-main" id="uploadFilesToProject">
 			<div class="options-top">
-				<h1>Optionen - <?php echo $title; ?></h1>
-				Navigation: <?php echo $breadcrumbs; ?>
+				<h1><?php echo t("Optionen") . " - " . $title; ?></h1>
+				<?php echo t("Navigation") . ": " . $breadcrumbs; ?>
 			</div>
 			<div class="options-bottom">
 				<form action="#filesAdded" method="POST" enctype="multipart/form-data">
-					Dateien hochladen: <input name="uploadFiles[]" type="file" multiple="multiple" required="required"><br />
-					<input type="submit" name="uploadFilesP" value="Dateien hochladen" />
+				<?php echo t("Dateien hochladen"); ?>: <input name="uploadFiles[]" type="file" multiple="multiple" required="required"><br />
+					<input type="submit" name="uploadFilesP" value="<?php echo t("Dateien hochladen"); ?>" />
 				</form>
 			</div>
 		</div>
 		<div class="options-main" id="editFiles">
 			<div class="options-top">
-				<h1>Optionen - <?php echo $title; ?></h1>
-				Navigation: <?php echo $breadcrumbs; ?>
+				<h1><?php echo t("Optionen") . " - " . $title; ?></h1>
+				<?php echo t("Navigation") . ": " . $breadcrumbs; ?>
 			</div>
 			<div class="options-bottom">
 				<form method="POST" action="#filesEdited">
@@ -632,13 +641,13 @@ if (isset($_POST['deleteCP']) AND $_POST['deletePrompt'] == "J") { //POST-Parame
 						}
 					}
 					?>
-					Datei bearbeiten:
+					<?php echo t("Datei bearbeiten"); ?>:
 					<select name="fileOld" required="required">
 						<?php echo $proFileOptions; ?>
 					</select><br />
-					Neuer Name: <input type="text" name="newName" required="required" /><br />
-					<input type="submit" name="editFiles" value="Änderungen bestätigen" /><br />
-					<small>Soll eine Datei gelöscht werden, muss das Feld "this.delete" enthalten (ohne ""). - Wenn der Dateiname bereits vorhanden ist, wird die alte Datei überschrieben. - Die Dateiendung muss nicht eingegeben werden.</small>
+					<?php echo t("Neuer Name"); ?>: <input type="text" name="newName" required="required" /><br />
+					<input type="submit" name="editFiles" value="<?php echo t("Änderungen speichern"); ?>" /><br />
+					<small><?php echo t("Soll eine Datei gelöscht werden, muss das Feld 'this.delete' enthalten (ohne '). - Wenn der Dateiname bereits vorhanden ist, wird die alte Datei überschrieben. - Die Dateiendung muss nicht eingegeben werden."); ?></small>
 				</form>
 			</div>
 		</div>
@@ -718,50 +727,50 @@ if (isset($_POST['deleteCP']) AND $_POST['deletePrompt'] == "J") { //POST-Parame
 		<div id="overlaybg" class="overlayBG" style="display: none;"></div>
 		<div id="notices-overlay" class="overlay" style="display: none;">
 			<div class="content">
-				<h2>Notizen</h2>
+				<h2><?php echo t("Notizen"); ?></h2>
 				<div class="overlayContent">
 					<form method="POST" action="#noticesEdited">
 						<textarea class="formEditTextarea" rows="25" name="notices"><?php echo $noticesFileContent; ?></textarea><br />
-						<input type="submit" name="editNoticesP" value="Änderungen speichern" />
+						<input type="submit" name="editNoticesP" value="<?php echo t("Änderungen speichern"); ?>" />
 					</form>
 				</div>
-				<div class="closeoverlay" title="Overlay schließen">X</div>
+				<div class="closeoverlay" title="<?php echo t("Overlay schließen"); ?>">X</div>
 			</div>
 		</div>
 		<div id="sourceLinks-overlay" class="overlay" style="display: none;">
 			<div class="content">
-				<h2>Quellen und Links <a onClick="$('#showSyntaxSourceLinks').toggle(200);"><img src="./images/info.png" width="24" height="24" /></a></h2>
+				<h2><?php echo t("Quellen und Links"); ?> <a onClick="$('#showSyntaxSourceLinks').toggle(200);"><img src="./images/info.png" width="24" height="24" /></a></h2>
 				<div class="overlayContent">
 					<div class="sourceLinksHrefs">
 						<div id="showSyntaxSourceLinks" style="display: none;">
 							<b>Syntax:</b><br />
-							"http://link.com - Link-Titel - Link-Beschreibung" => "http://google.de - Google - Suchmaschine" (Als Trenner immer " - " (ohne "") nutzen)<br />
-							oder<br />
-							"http://link.com" => "http://google.de" (Keine Leerzeichen nach dem Link)
+							"http://link.com - <?php echo t("Link-Titel"); ?> - <?php echo t("Link-Beschreibung"); ?>" => "http://google.de - Google - <?php echo t("Suchmaschine"); ?>" (<?php echo t("Als Trenner immer ' - ' (ohne '') nutzen"); ?>)<br />
+							<?php echo t("oder"); ?><br />
+							"http://link.com" => "http://google.de" (<?php echo t("Keine Leerzeichen nach dem Link"); ?>)
 						</div>
 						<div>
-							<b>Links:</b><br />
+							<b><?php echo t("Links"); ?>:</b><br />
 							<?php echo $sourceLinksFileContentLinks; ?>
 						</div>
 					</div>
 					<form method="POST" action="#sourceLinksEdited">
 						<textarea class="formEditTextarea" rows="25" name="sourceLinks"><?php echo $sourceLinksFileContent; ?></textarea><br />
-						<input type="submit" name="editSourceLinksP" value="Änderungen speichern" />
+						<input type="submit" name="editSourceLinksP" value="<?php echo t("Änderungen speichern"); ?>" />
 					</form>
 				</div>
-				<div class="closeoverlay" title="Overlay schließen">X</div>
+				<div class="closeoverlay" title="<?php echo t("Overlay schließen"); ?>">X</div>
 			</div>
 		</div>
 		<div id="materials-overlay" class="overlay" style="display: none;">
 			<div class="content">
-				<h2>Material-Liste</h2>
+				<h2><?php echo t("Materialliste"); ?></h2>
 				<div class="overlayContent">
 					<form method="POST" action="#materialsEdited">
 						<textarea class="formEditTextarea" rows="25" name="materials"><?php echo $materialsFileContent; ?></textarea><br />
-						<input type="submit" name="editMaterialsP" value="Änderungen speichern" />
+						<input type="submit" name="editMaterialsP" value="<?php echo t("Änderungen speichern"); ?>" />
 					</form>
 				</div>
-				<div class="closeoverlay" title="Overlay schließen">X</div>
+				<div class="closeoverlay" title="<?php echo t("Overlay schließen"); ?>">X</div>
 			</div>
 		</div>
 	</div>
