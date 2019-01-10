@@ -105,35 +105,11 @@ if (isset($_POST['addCP'])) { //POST-Parameter addCP (submit-name) gesendet - Ka
         move_uploaded_file($tmp_name, $moveToPath . $name); //Temporären Namen in Ursprungsnamen ändern
 	}
 } elseif (isset($_POST['editNoticesP'])) { //POST-Parameter editNoticesP (submit-name) gesendet - -/Projekt Notizen bearbeiten
-	$file = "." . getSetting('baseDir');
-	$file .= ($getPath == "/") ? ($getPath) : ($getPath . "/");
-	$file .= "notes.info";
-	$file = utf8_decode($file); //Datei mit Pfad
-
-	$file_handle = fopen($file, 'w'); //Datei öffnen
-	ftruncate($file_handle, 0);	//Datei leeren
-	fwrite($file_handle, $_POST['notices']); //Textarea-Inhalt in Datei schreiben
-	fclose($file_handle); //Datei schließen
+	handleSettingFiles("notes.info", "notices");
 } elseif (isset($_POST['editSourceLinksP'])) { //POST-Parameter editSourceLinksP (submit-name) gesendet - -/Projekt Quellen/Links bearbeiten
-	$file = "." . getSetting('baseDir');
-	$file .= ($getPath == "/") ? ($getPath) : ($getPath . "/");
-	$file .= "sourceLinks.info";
-	$file = utf8_decode($file); //Datei mit Pfad
-
-	$file_handle = fopen($file, 'w'); //Datei öffnen
-	ftruncate($file_handle, 0); //Datei leeren
-	fwrite($file_handle, $_POST['sourceLinks']); //Textarea-Inhalt in Datei schreiben
-	fclose($file_handle); //Datei schließen
+	handleSettingFiles("sourceLinks.info", "sourceLinks");
 } elseif (isset($_POST['editMaterialsP'])) { //POST-Parameter editMaterialsP (submit-name) gesendet - -/Projekt Materialliste bearbeiten
-	$file = "." . getSetting('baseDir');
-	$file .= ($getPath == "/") ? ($getPath) : ($getPath . "/");
-	$file .= "materials.info";
-	$file = utf8_decode($file); //Datei mit Pfad
-
-	$file_handle = fopen($file, 'w'); //Datei öffnen
-	ftruncate($file_handle, 0); //Datei leeren
-	fwrite($file_handle, $_POST['materials']); //Textarea-Inhalt in Datei schreiben
-	fclose($file_handle); //Datei schließen
+	handleSettingFiles("materials.info", "materials");
 } elseif (isset($_POST['editFiles'])) { //POST-Parameter editFiles (submit-name) gesendet - -/Projekt Dateien umbenennen oder löschen
 	$file_renameName = $_POST['newName']; //Neuer Name
 	$file_nameEx = explode("#####", $_POST['fileOld']); //Alter Name, gesplittet in Name und Dateiendung
@@ -143,6 +119,18 @@ if (isset($_POST['addCP'])) { //POST-Parameter addCP (submit-name) gesendet - Ka
 	} else { //Sonst umbenennen
 		rename(utf8_decode($dir . $file_nameEx[0] . "." . $file_nameEx[1]), utf8_decode($dir . $file_renameName . "." . $file_nameEx[1])); //Datei umbenennen
 	}
+}
+
+function handleSettingFiles($settingsFile, $settingPOST) {
+	$file = "." . getSetting('baseDir');
+	$file .= ($getPath == "/") ? ($getPath) : ($getPath . "/");
+	$file .= $settingsFile;
+	$file = utf8_decode($file); //Datei mit Pfad
+
+	$file_handle = fopen($file, 'w'); //Datei öffnen
+	ftruncate($file_handle, 0); //Datei leeren
+	fwrite($file_handle, $_POST[$settingPOST]); //Textarea-Inhalt in Datei schreiben
+	fclose($file_handle); //Datei schließen
 }
 
 //Ordnerpfad öffnen
@@ -214,47 +202,35 @@ if (isset($_POST['deleteCP']) AND $_POST['deletePrompt'] == "J") { //POST-Parame
 		});
 
 		function locationHashChanged() { //Funktion für die Hashänderung, blendet Felder nach Bedarf ein/aus
+			function toggleBars() {
+				$('.welcome-main').toggle(false);
+				$('.actionBar').toggle(false);
+				$('#abortAction').toggle(true);
+			}
+
 			switch (location.hash) {
 				case "#addCatPro":
-					$('.welcome-main').toggle(false);
-					$('.actionBar').toggle(false);
-					$('#abortAction').toggle(true);
-
+					toggleBars();
 					$('#addCategoryorProject').toggle(true);
 					break;
 				case "#renameCatPro":
-					$('.welcome-main').toggle(false);
-					$('.actionBar').toggle(false);
-					$('#abortAction').toggle(true);
-
+					toggleBars();
 					$('#renameCategoryorProject').toggle(true);
 					break;
 				case "#editProject":
-					$('.welcome-main').toggle(false);
-					$('.actionBar').toggle(false);
-					$('#abortAction').toggle(true);
-
+					toggleBars();
 					$('#editProject').toggle(true);
 					break;
 				case "#deleteCatPro":
-					$('.welcome-main').toggle(false);
-					$('.actionBar').toggle(false);
-					$('#abortAction').toggle(true);
-
+					toggleBars();
 					$('#deleteCategoryorProject').toggle(true);
 					break;
 				case "#uploadFilesToProject":
-					$('.welcome-main').toggle(false);
-					$('.actionBar').toggle(false);
-					$('#abortAction').toggle(true);
-
+					toggleBars();
 					$('#uploadFilesToProject').toggle(true);
 					break;
 				case "#editFiles":
-					$('.welcome-main').toggle(false);
-					$('.actionBar').toggle(false);
-					$('#abortAction').toggle(true);
-
+					toggleBars();
 					$('#editFiles').toggle(true);
 					break;
 				default:
@@ -275,11 +251,10 @@ if (isset($_POST['deleteCP']) AND $_POST['deletePrompt'] == "J") { //POST-Parame
 		window.onhashchange = locationHashChanged;
 
 		function formEditPChangeimg(proImage) { //Project Edit-Menü -> Bild laden bzw. de-laden wenn keines gewählt
-			if (proImage.value == "") {
+			if (proImage.value == "")
 				document.getElementById("formEditPImgpreview").src = 'images/projects.png';
-			} else {
+			else
 				document.getElementById("formEditPImgpreview").src = '.' + '<?php echo unixUmlauts(getSetting('baseDir') . $getPath); ?>' + "/" + proImage.value;
-			}
 		}
 		</script>
 		<script type="text/javascript">
