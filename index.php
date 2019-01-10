@@ -3,7 +3,7 @@
 header('Content-Type: text/html; charset=utf-8');
 
 //Set language code
-$lang = "en_GB";
+$lang = "de_DE";
 
 include_once("./locale/" . $lang . ".php");
 
