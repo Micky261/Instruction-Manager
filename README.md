@@ -15,7 +15,7 @@ Weitere Infos und Screenshots gibt es auf der Website zum Tool: --Zurzeit nicht 
 Für die Installation werden folgende Dinge benötigt:
 
 * PHP-fähiger Webserver (mit PDO-Erweiterung)
-* keine Datenbank (es wird SQLite und Textdateien genutzt), phpliteadmin ist zur Verwaltung mitgegeben
+* keine Datenbank (es wird SQLite und Textdateien genutzt), phpliteadmin kann verwendet werden
 
 Schritte
 
@@ -41,7 +41,3 @@ Es ist aber zu erwähnen, dass selbst wenn CRF/XSS-Attacken oder SQL-Injections 
 * Gerne können Vorschläge für das Projekt gemacht werden, dazu einfach links auf Issues klicken und einen neuen Vorschlag erstellen - da das Projekt aber aktuell ruht, bitte keine allzugroßen Hoffnungen machen
 * Pull-Request sind auch gerne gesehen
 * Übersetzungen sind herzlich willkommen! Im Verzeichnis locales findet sich eine Vorlage für neue Übersetzungen (_new.php_), bitte einfach entsprechend des Sprachcodes umbenennen
-
-## Lizenzen ##
-
-* PHPLiteAdmin unterliegt der [GNU GPL](http://www.gnu.org/licenses/)
